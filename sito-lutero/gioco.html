@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gioco Martin Lutero</title>
+    <link rel="image icon" href="images/MartinLuteroLogo.png" type="image.png">
+    <style>
+        body {
+            margin: 0;
+            background-color: #eee;
+            font-family: sans-serif;
+            text-align: center;
+        }
+
+        #game-container {
+            margin: 0 auto;
+            width: 800px;
+            height: 600px;
+            border: 2px solid #000;
+        }
+
+        #debug-panel {
+            margin: 10px auto;
+            width: 800px;
+            padding: 10px;
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+        }
+
+        #debug-log {
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: #333;
+            color: #fff;
+            padding: 5px;
+        }
+
+        .error {
+            color: #ff5555;
+        }
+
+        .success {
+            color: #55ff55;
+        }
+
+        .info {
+            color: #5555ff;
+        }
+
+        .h1 {
+            font-size: 3 rem;
+            text-align: center;
+            color: black;
+        }
+
+        .p {
+            font-size: 1.5 rem;
+            text-align: center;
+            color: black;
+        }
+
+        #background-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/joshua.jpeg');
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.js"></script>
+</head>
+
+<body>
+    <div id="background-image"></div>"
+    <h1>Gioco Martin Lutero</h1>
+    <p>Benvenuto nel gioco di Martin Lutero! Usa i tasti W, A, S, D per muoverti.</p>
+    <p>Controlla la console per eventuali errori o messaggi di debug.</p>
+    <div id="game-container"></div>
+    <div id="debug-panel">
+        <h3>Debug Panel</h3>
+        <button id="check-files">Verifica File</button>
+        <button id="reload-game">Ricarica Gioco</button>
+        <div id="debug-log"></div>
+    </div>
+
+    <script>
+        // Variabili globali e costanti
+        let game;
+        const debugLog = document.getElementById('debug-log');
+        const GAME_CONFIG = {
+            width: 800,
+            height: 600,
+            playerSpeed: 150,
+            cacheBust: '?cb=' + new Date().getTime()
+        };
+
+        // Utility functions
+        function log(message, type = 'info') {
+            const entry = document.createElement('div');
+            entry.classList.add(type);
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            debugLog.appendChild(entry);
+            debugLog.scrollTop = debugLog.scrollHeight;
+            console.log(`[${type}] ${message}`);
+        }
+
+        async function checkFile(url) {
+            try {
+                const response = await fetch(url, { method: 'HEAD' });
+                log(`${response.ok ? '✅' : '❌'} File ${url}: ${response.status}`,
+                    response.ok ? 'success' : 'error');
+                return response.ok;
+            } catch (error) {
+                log(`❌ Errore accesso al file: ${url} - ${error.message}`, 'error');
+                return false;
+            }
+        }
+
+        // Game Scene
+        class MainGameScene extends Phaser.Scene {
+            constructor() {
+                super({ key: 'MainGame' });
+            }
+
+            preload() {
+                this.setupLoadingScreen();
+                this.loadAssets();
+            }
+
+            create() {
+                try {
+                    this.setupMap();
+                    this.time.delayedCall(10, () => {
+                        this.setupPlayer();
+                        this.setupCollisions();
+                        this.setupCamera();
+                        this.setupInput();
+                        log('✅ Gioco inizializzato con successo', 'success');
+                    });
+                } catch (error) {
+                    this.handleError(error);
+                }
+            }
+
+            update() {
+                this.handlePlayerMovement();
+            }
+
+            // Scene setup methods
+            setupLoadingScreen() {
+                const width = this.cameras.main.width;
+                const height = this.cameras.main.height;
+
+                this.loadingText = this.add.text(width / 2, height / 2 - 50, 'Caricamento...',
+                    { font: '20px Arial', fill: '#ffffff' }).setOrigin(0.5);
+
+                this.setupProgressBar(width, height);
+            }
+
+            setupProgressBar(width, height) {
+                const progressBar = this.add.graphics();
+                const progressBox = this.add.graphics();
+
+                progressBox.fillStyle(0x222222, 0.8);
+                progressBox.fillRect(width / 4, height / 2, width / 2, 50);
+
+                this.load.on('progress', (value) => {
+                    progressBar.clear();
+                    progressBar.fillStyle(0xffffff, 1);
+                    progressBar.fillRect(width / 4 + 10, height / 2 + 10,
+                        (width / 2 - 20) * value, 30);
+                });
+
+                this.load.on('complete', () => {
+                    progressBar.destroy();
+                    progressBox.destroy();
+                    this.loadingText.destroy();
+                });
+            }
+
+            loadAssets() {
+                const cacheBust = GAME_CONFIG.cacheBust;
+
+                this.load.json('mapData', 'assets/mappa.json' + cacheBust);
+                this.load.json('tilesetData', 'assets/tileset.json' + cacheBust);
+                this.load.image('tiles', 'assets/tileset.png' + cacheBust);
+                this.load.spritesheet('lutero', 'assets/lutero.png' + cacheBust,
+                    { frameWidth: 32, frameHeight: 32 });
+                this.load.audio('collect', 'assets/collect.mp3' + cacheBust);
+            }
+            setupMap() {
+                try {
+                    // Step 1: Load and validate map data with enhanced debugging
+                    const mapData = this.cache.json.get('mapData');
+                    console.log('Raw map data:', mapData);
+
+                    if (!mapData || !mapData.layers || !mapData.tilesets) {
+                        throw new Error('Struttura mappa non valida o mancante');
+                    }
+
+                    // Step 2: Create and validate tilemap
+                    const map = this.make.tilemap({
+                        key: 'mapData',
+                        tileWidth: 32,
+                        tileHeight: 32,
+                        width: mapData.width || 50,
+                        height: mapData.height || 50
+                    });
+
+                    console.log('Tilemap created:', {
+                        width: map.width,
+                        height: map.height,
+                        tileWidth: map.tileWidth,
+                        tileHeight: map.tileHeight,
+                        layers: map.layers
+                    });
+
+                    // Step 3: Create tileset
+                    const tilesetData = this.cache.json.get('tilesetData');
+                    if (!tilesetData || !tilesetData.name) {
+                        throw new Error('Dati tileset non validi o mancanti');
+                    }
+
+                    console.log('Creating tileset:', {
+                        name: tilesetData.name,
+                        source: 'tiles',
+                        width: tilesetData.imagewidth,
+                        height: tilesetData.imageheight
+                    });
+
+                    const tileset = map.addTilesetImage(tilesetData.name, 'tiles', 32, 32);
+                    if (!tileset) {
+                        throw new Error('Impossibile creare il tileset');
+                    }
+                    log('✅ Tileset aggiunto', 'success');
+
+                    // Step 4: Create blank layer and fill with data
+                    this.groundLayer = map.createBlankLayer('Grounds', tileset, 0, 0);
+                    if (!this.groundLayer) {
+                        throw new Error('Impossibile creare il layer Grounds');
+                    }
+
+                    log('✅ Layer Grounds creato e riempito', 'success');
+
+                    // Step 5: Create walls layer if needed
+                    const wallsData = mapData.layers.find(l => l.name === 'Walls');
+                    if (wallsData) {
+                        this.wallsLayer = map.createBlankLayer('Walls', tileset, 0, 0);
+                        if (this.wallsLayer) {
+                            // Add wall tiles around the edges
+                            this.wallsLayer.fill(2, 0, 0, map.width, 1); // Top
+                            this.wallsLayer.fill(2, 0, map.height - 1, map.width, 1); // Bottom
+                            this.wallsLayer.fill(2, 0, 0, 1, map.height); // Left
+                            this.wallsLayer.fill(2, map.width - 1, 0, 1, map.height); // Right
+                            this.wallsLayer.setCollisionByProperty({ collides: true });
+                            log('✅ Layer Walls creato', 'success');
+                        }
+                    }
+
+                    // Step 6: Set map dimensions
+                    this.mapWidth = map.width * map.tileWidth;
+                    this.mapHeight = map.height * map.tileHeight;
+
+                    log('✅ Mappa configurata correttamente', 'success');
+
+                } catch (error) {
+                    this.handleError(error);
+                    console.error('Map Setup Error:', {
+                        mapData: this.cache.json.get('mapData'),
+                        tilesetData: this.cache.json.get('tilesetData'),
+                        error: error.message,
+                        stack: error.stack
+                    });
+                }
+            }
+
+            setupPlayer() {
+                this.player = this.physics.add.sprite(100, 100, 'lutero')
+                    .setSize(16, 24)
+                    .setOffset(8, 8);
+
+                this.createPlayerAnimations();
+            }
+
+            createPlayerAnimations() {
+                // Animazione idle
+                this.anims.create({
+                    key: 'idle',
+                    frames: this.anims.generateFrameNumbers('lutero', { start: 0, end: 0 }),
+                    frameRate: 10,
+                    repeat: -1
+                });
+
+                // Animazione camminata
+                this.anims.create({
+                    key: 'walk',
+                    frames: this.anims.generateFrameNumbers('lutero', { start: 0, end: 3 }),
+                    frameRate: 10,
+                    repeat: -1
+                });
+
+                // Imposta l'animazione di default
+                this.player.play('idle');
+            }
+
+            // Aggiungi anche questo metodo per gestire le animazioni durante il movimento
+            updatePlayerAnimation(velocity) {
+                if (velocity.x !== 0 || velocity.y !== 0) {
+                    this.player.play('walk', true);
+                    // Flip sprite based on direction
+                    this.player.setFlipX(velocity.x < 0);
+                } else {
+                    this.player.play('idle', true);
+                }
+            }
+
+            setupCollisions() {
+                this.physics.add.collider(this.player, this.wallsLayer);
+            }
+
+            setupCamera() {
+                if (!this.player) return;
+
+                this.cameras.main.startFollow(this.player);
+
+                // Usa le dimensioni salvate o valori di fallback
+                const mapWidth = this.mapWidth || GAME_CONFIG.width;
+                const mapHeight = this.mapHeight || GAME_CONFIG.height;
+
+                this.cameras.main.setBounds(0, 0, mapWidth, mapHeight);
+                log('✅ Camera configurata', 'success');
+            }
+
+            setupInput() {
+                this.keys = this.input.keyboard.addKeys({
+                    up: 'W',
+                    down: 'S',
+                    left: 'A',
+                    right: 'D',
+                    space: 'SPACE'
+                });
+            }
+
+            handlePlayerMovement() {
+                if (!this.player || !this.keys) return;
+
+                const speed = GAME_CONFIG.playerSpeed;
+                const velocity = new Phaser.Math.Vector2(0, 0);
+
+                if (this.keys.left.isDown) velocity.x = -speed;
+                else if (this.keys.right.isDown) velocity.x = speed;
+                if (this.keys.up.isDown) velocity.y = -speed;
+                else if (this.keys.down.isDown) velocity.y = speed;
+
+                velocity.normalize().scale(speed);
+                this.player.setVelocity(velocity.x, velocity.y);
+
+                this.updatePlayerAnimation(velocity);
+            }
+
+            handleError(error) {
+                log(`❌ ERRORE: ${error.message}`, 'error');
+                console.error(error);
+            }
+        }
+
+        // Game configuration
+        const config = {
+            type: Phaser.AUTO,
+            width: GAME_CONFIG.width,
+            height: GAME_CONFIG.height,
+            parent: 'game-container',
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    gravity: { y: 0 },
+                    debug: false
+                }
+            },
+            scene: MainGameScene
+        };
+
+        // Event Listeners
+        document.getElementById('check-files').addEventListener('click', async () => {
+            log('Verifica dei file di gioco...', 'info');
+            await Promise.all([
+                checkFile('assets/mappa.json'),
+                checkFile('assets/tileset.json'),
+                checkFile('assets/tileset.png'),
+                checkFile('assets/lutero.png'),
+                checkFile('assets/collect.mp3')
+            ]);
+        });
+
+        document.getElementById('reload-game').addEventListener('click', () => {
+            if (game) {
+                game.destroy(true);
+                debugLog.innerHTML = '';
+            }
+            log('Riavvio del gioco...', 'info');
+            setTimeout(() => {
+                game = new Phaser.Game(config);
+            }, 500);
+        });
+
+        // Game initialization
+        window.onload = () => {
+            log('Inizializzazione gioco...', 'info');
+            game = new Phaser.Game(config);
+        };
+    </script>
+</body>
+
+</html>

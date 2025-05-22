@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Martin Lutero e la Riforma Protestante</title>
+    <link rel="image icon" href="images/MartinLuteroLogo.png" type="image.png">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            font-family: Georgia, serif;
+            box-sizing: border-box;
+            color: #2b2b2b;
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        .section-container {
+            width: 100vw;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem 2rem;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        .section-content {
+            max-width: calc(100% - 4rem);
+            width: relative;
+            height: auto;
+            background-color: rgba(0, 0, 0, 0.86434241);
+            padding: 2rem;
+            border-radius: 10px;
+            color: #fff;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        #home-section {
+            background-image: url("images/backgroundHome.png");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        #home-section h1 {
+            color: #FFD700;
+        }
+
+        #lutero-section {
+            background-image: url("images/background2.png");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        #lutero-section h2 {
+            color: #FF6B6B;
+        }
+
+        #problems-section {
+            background-image: url("images/background3.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        #problems-section h2 {
+            color: #4ECDC4;
+        }
+
+        #thesis-section {
+            background-image: url("images/background4.jpeg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        #thesis-section h2 {
+            color: #96CEB4;
+        }
+
+        #conflict-section {
+            background-image: url("images/background5.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        #conflict-section h2 {
+            color: #FF9F1C;
+        }
+
+        #impact-section {
+            background-image: url("images/background6.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        #impact-section h2 {
+            color: #9B59B6;
+        }
+
+        #legacy-section {
+            background-image: url("images/background7.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        #legacy-section h2 {
+            color: #58D68D;
+        }
+
+        #game-section {
+            background-image: url("images/background8.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        #game-section h2 {
+            color: #F1C40F;
+        }
+
+        #consequences-section {
+            background-image: url("images/background9.png");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        #consequences-section h2 {
+            color: #3498DB;
+        }
+
+        #sitografia-section {
+            background-image: url("images/background10.jpeg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        #sitografia-section h2 {
+            color: #E74C3C;
+        }
+
+        h1,
+        h2 {
+            margin-bottom: 1.5rem;
+        }
+
+        p {
+            line-height: 1.6;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Navigation Styles */
+        .hamburger-menu {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background-color: #6b2e00;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+            z-index: 20;
+        }
+
+        #page-index {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 1rem;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+            z-index: 15;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        #page-index.active {
+            transform: translateX(0);
+        }
+
+        #page-index h3 {
+            color: #f0a500;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        #page-index ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #page-index ul li {
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        #page-index ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            display: block;
+            padding: 0.5rem;
+        }
+
+        #page-index ul li a:hover {
+            color: #f0a500;
+            transform: scale(1.05);
+        }
+
+        button {
+            background-color: #6b2e00;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 1rem;
+        }
+
+        button:hover {
+            background-color: #8b3e00;
+        }
+
+        @media (max-width: 768px) {
+            @media (max-width: 768px) {
+                .section-container {
+                    padding: 2rem 1rem;
+                }
+
+                .section-content {
+                    max-width: calc(100% - 2rem);
+                    padding: 1rem;
+                }
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            h2 {
+                font-size: 1.4rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <button id="toggle-index" class="hamburger-menu">Indice</button>
+    <nav id="page-index">
+        <h3>(っ◔◡◔)っ Indice</h3>
+        <ul>
+            <li><a href="#home-section">Martin Lutero e la Riforma Protestante</a></li>
+            <li><a href="#lutero-section">Chi era Martin Lutero</a></li>
+            <li><a href="#problems-section">I problemi della Chiesa</a></li>
+            <li><a href="#thesis-section">La riforma di Martin Lutero</a></li>
+            <li><a href="#conflict-section">Lo scontro con Papa Leone X e l'imperatore Carlo V</a></li>
+            <li><a href="#impact-section">Teoria della predestinazione e giustificazione per sola fede</a></li>
+            <li><a href="#legacy-section">Alcune delle 95 tra le più importanti</a></li>
+            <li><a href="#consequences-section">Le conseguenze della Riforma</a></li>
+            <li><a href="#game-section">Gioca e divertiti</a></li>
+            <li><a href="#sitografia-section">Sitografia</a></li>
+        </ul>
+    </nav>
+
+    <section id="home-section" class="section-container">
+        <div class="section-content">
+            <h1 data-aos="fade-up" data-aos-duration="1000">Martin Lutero e la Riforma Protestante</h1>
+        </div>
+    </section>
+
+    <section id="lutero-section" class="section-container">
+        <div class="section-content">
+            <h2 data-aos="fade-up" data-aos-duration="1000">Chi era Martin Lutero</h2>
+            <p data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                Martin Lutero (1483–1546) fu un frate agostiniano e professore di teologia a Wittenberg. Studiando la
+                Bibbia, arrivò a ritenere che l’uomo non può conquistarsi la salvezza con le opere o con il denaro, ma
+                soltanto attraverso la fede in Cristo. Denunciò apertamente gli abusi della Chiesa perché li vedeva
+                lontani dal Vangelo. In Germania, poi, molti principi e sudditi erano stanchi delle tasse e delle
+                ingerenze di Roma: questo favorì la diffusione delle sue idee.
+            </p>
+        </div>
+    </section>
+
+    <section id="problems-section" class="section-container">
+        <div class="section-content">
+            <h2 data-aos="fade-up" data-aos-duration="1000">I problemi della Chiesa</h2>
+            <p data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                Lutero collegava i suoi insegnamenti alle gravi mancanze della Chiesa del suo tempo:
+            </p>
+            <ul data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300"
+                style="list-style-type: disc; padding-left: 20px;">
+                <li>Indulgenze: la vendita di certificati che promettevano la remissione dei peccati in cambio di
+                    denaro,
+                    vista da Lutero come un’inganno.</li>
+
+                <li>Concubinato e scarsa moralità del clero: molti preti e vescovi vivevano relazioni non riconosciute e
+                    conducevano una vita agiata, in contrasto con il voto di castità e povertà evangelica.</li>
+
+                <li>Impreparazione spirituale del basso clero: in molte parrocchie il sacerdote non conosceva bene la
+                    dottrina o non parlava la lingua del popolo, per cui non riusciva a insegnare o celebrare
+                    adeguatamente
+                    i sacramenti.</li>
+
+                <li>Simonia e nepotismo: compravendita di cariche ecclesiastiche e favoritismi verso i parenti dei
+                    potenti,
+                    comportamenti che trasformavano la Chiesa in un’istituzione corrotta.</li>
+        </div>
+    </section>
+
+    <section id="thesis-section" class="section-container">
+        <div class="section-content">
+            <h2 data-aos="fade-up" data-aos-duration="1000">La riforma di Martin Lutero</h2>
+            <p data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                Dal 1517 la Riforma si diffuse rapidamente in Germania e poi in altri Paesi europei. I principi tedeschi
+                che appoggiarono Lutero eliminarono il legame con Roma e introdussero nuove regole: il celibato non era
+                più obbligatorio, la Bibbia veniva letta in tedesco e i laici partecipavano alla vita della comunità.
+                Oltre al luteranesimo sorsero correnti simili, come il calvinismo in Svizzera e l’anglicanesimo in
+                Inghilterra.
+            </p>
+        </div>
+    </section>
+
+    <section id="conflict-section" class="section-container">
+        <div class="section-content">
+            <h2 data-aos="fade-up" data-aos-duration="1000">Lo scontro con Papa Leone X e l'imperatore Carlo V</h2>
+            <p data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+            <ul data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300"
+                style="list-style-type: disc; padding-left: 20px;">
+                <li>Lutero con l'opuscolo “Alla nobiltà cristiana di nazione tedesca” (1520) esortò i principi tedeschi
+                    a
+                    difendere la Chiesa vera liberandosi del controllo del papa, che imponeva tasse e leggi ingiuste.
+                </li>
+                <li>Bolla “Exsurge Domine” (15 giugno 1520): Leone X condannò alcune tesi di Lutero e gli chiese di
+                    ritirarle entro due mesi.</li>
+
+                <li>Bruciò la bolla (10 dicembre 1520): Lutero diede fuoco al documento papale per mostrare il suo
+                    dissenso.</li>
+
+                <li>Dietà di Worms (aprile–maggio 1521): convocata da Carlo V per far ritrattare Lutero, ma lui rifiutò.
+                </li>
+                <li>L’imperatore emise l’Editto di Worms (25 maggio 1521), che lo mise al bando.</li>
+
+                <li>Federico di Sassonia: uno dei principi elettori, noto come “il Saggio”, protese Lutero facendolo
+                    nascondere nel castello di Wartburg, dove poté proseguire i suoi studi e le traduzioni.</li>
+        </div>
+    </section>
+
+    <section id="impact-section" class="section-container">
+        <div class="section-content">
+            <h2 data-aos="fade-up" data-aos-duration="1000">Teoria della predestinazione e giustificazione per sola fede
+            </h2>
+            <ul data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300"
+                style="list-style-type: disc; padding-left: 20px;">
+                <li>Sola fide: Lutero insegnava che la salvezza si ottiene solo grazie alla fede in Cristo, non per
+                    meriti personali o riti religiosi. La fede stessa è un dono di Dio.</li>
+
+                <li>Predestinazione: pur ammettendo che Dio conosca e decida il destino di ciascuno, Lutero non sviluppò
+                    la teoria calvinista della “doppia predestinazione”. Egli lasciò spazio alla responsabilità del
+                    credente, chiamato a crescere nella fede tramite la lettura della Bibbia.</li>
+        </div>
+    </section>
+
+    <section id="legacy-section" class="section-container">
+        <div class="section-content">
+            <h2 data-aos="fade-up" data-aos-duration="1000">Alcune delle 95 tra le più importanti</h2>
+            <p data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                Tra le 95 affermazioni di Lutero spiccano:
+            </p>
+            <ul data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300"
+                style="list-style-type: disc; padding-left: 20px;">
+                <li>Tesi 8: LE PENITENZE CANONICHE SONO IMPOSTE SOLO AI VIVI E NESSUNA DEVE ESSERE IMPOSTA AI MORENTI
+                </li>
+                <li>Tesi 20: IL PAPA, CON LA REMISSIONE PLENARIA DI TUTTE LE PENE, NON INTENDE DI TUTTE, MA SOLO QUELLE
+                    IMPOSTE DA LUI</li>
+                <li>Tesi 21: SBAGLIANO QUEI PREDICATORI DELLE INDULGENZE CHE DICONO CHE, GRAZIE ALLE INDULGENZE DEL
+                    PAPA, L'UOMO VIENE LIBERATO E SALVATO DA OGNI PENA</li>
+                <li>Tesi 32: SARANNO DANNATI IN ETERNO CON I LORO MAESTRI CHI CREDE DI ESSERE SICURO DI ESSERE SALVO
+                    GRAZIE ALL'ACQUISTO DELLE INDULGENZE</li>
+                <li>Tesi 50: AI CRISTIANI BISOGNA INSEGNARE CHE, SE IL PAPA CONOSCESSE LE ESTORSIONI DEI PREDICATORI DI
+                    INDULGENZE, PREFERIREBBE CHE LA BASILICA DI SAN PIETRO ANDASSE IN CENERE PIUTTOSTO CHE LA SI
+                    EDIFICASSE CON LA PALLE, LA CARNE E LE OSSA DELLE SUE PECORE</li>
+                <li>Tesi 62: IL VERO TESORO DELLA CHIESA è IL SANTISSIMO VANGELO DELLA GLORIA E DELLA GRAZIA DI DIO</li>
+                <li>Tesi 63: MA ESSO è MERITATAMENTE OGGETTO D'ODIO PERCHè PONE I PRIMI ALL'ULTIMO POSTO</li>
+                <li>Tesi 66: I TESORI DELLE INDULGENZE SONO RETI CON CUI ORA SI PESCANO LE RICCHEZZE DEGLI UOMINI</li>
+                <li>Tesi 67: LE INDULGENZE SI CAPISCE CHE SONO DAVVERO TALI SOLO NEL PROCURARE UN GUADAGNO MATERIALE
+                </li>
+                <li>Tesi 79: DIRE CHE LA CROCE, ALZATA SOLENNEMENTE CON LE ARMI PAPALI, EQUIVALE ALLA CROCE DI CRISTO è
+                    BESTEMMIA</li>
+            </ul>
+        </div>
+    </section>
+
+    <section id="consequences-section" class="section-container">
+        <div class="section-content">
+            <h2 data-aos="fade-up" data-aos-duration="1000">Le conseguenze della Riforma</h2>
+            <p data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                Grazie alla stampa, ideata a metà del Quattrocento, i testi di Lutero vennero riprodotti in molte copie
+                e diffuse rapidamente. Questo favorì:
+            </p>
+            <ul data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300"
+                style="list-style-type: disc; padding-left: 20px;">
+                <li>Diffusione dell’istruzione: i lettori impararono a leggere in volgare e crebbero i livelli di
+                    alfabetizzazione.</li>
+                <li>Traduzione della Bibbia in tedesco, rendendo le Scritture accessibili al popolo</li>
+                <li>Nascita di nuove forme di cristianesimo (luteranesimo, calvinismo, anglicanesimo)</li>
+                <li>Riforma della Chiesa cattolica (Controriforma)</li>
+                <li>Sostegno politico: le tipografie, spesso sostenute da principi e mercanti, diventarono centri di
+                    diffusione culturale indipendenti da Roma e diedero voce alle nuove idee.</li>
+                <li>Rafforzamento del potere dei principi tedeschi che appoggiarono Lutero</li>
+            </ul>
+        </div>
+    </section>
+
+    <section id="game-section" class="section-container">
+        <div class="section-content">
+            <h2 data-aos="fade-up" data-aos-duration="1000">Gioca e Divertiti</h2>
+            <button data-aos="fade-up" data-aos-duration="1000" data-aos-delay="400"
+                onclick="window.location.href='sistemi.html'">
+                Coming soon...
+            </button>
+        </div>
+    </section>
+
+    <section id="sitografia-section" class="section-container">
+        <div class="section-content">
+            <h2 data-aos="fade-up" data-aos-duration="1000">Sitografia</h2>
+            <p data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                I principali siti da cui abbiamo attinto informazioni sono:
+            </p>
+            <ul data-aos="fade-up" data-aos-duration="1000" data-aos-delay="300"
+                style="list-style-type: disc; padding-left: 20px;">
+                <li><a href="https://www.treccani.it/enciclopedia/riforma-protestante/" target="_blank"
+                        style="color: #fff; text-decoration: underline;">Enciclopedia Treccani, voce "Riforma
+                        protestante"</a></li>
+                <li><a href="https://www.treccani.it/enciclopedia/martin-lutero/" target="_blank"
+                        style="color: #fff; text-decoration: underline;">Enciclopedia Treccani, voce "Lutero,
+                        Martino"</a></li>
+                <li><a href="https://www.vatican.va/content/leonexx/it/" target="_blank"
+                        style="color: #fff; text-decoration: underline;">Vaticano, testo bolla "Exsurge
+                        Domine"</a></li>
+                <li><a href="https://it.wikipedia.org/wiki/Martin_Lutero" target="_blank"
+                        style="color: #fff; text-decoration: underline;">Wikipedia, Martin Lutero</a></li>
+                <li><a href="https://www.treccani.it/enciclopedia/predestinazione" target="_blank"
+                        style="color: #fff; text-decoration: underline;">Treccani, voce "Predestinazione"</a></li>
+                <li><a href="https://www.zanichelli.it/ricerca/prodotti/storia-progettare-futuro2ed?hl=La%20storia"
+                        target="_blank" style="color: #fff; text-decoration: underline;">Dal nostro libro di storia, da
+                        pagina 456 a pagina 463"</a></li>
+            </ul>
+        </div>
+    </section>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100,
+            easing: 'ease-in-out'
+        });
+
+        const toggleButton = document.getElementById('toggle-index');
+        const pageIndex = document.getElementById('page-index');
+        const links = document.querySelectorAll('#page-index ul li a');
+
+        toggleButton.addEventListener('click', () => {
+            pageIndex.classList.toggle('active');
+        });
+
+        links.forEach(link => {
+            link.addEventListener('click', (e) => {
+                if (!link.getAttribute('href').includes('.html')) {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+
+                    window.scrollTo({
+                        top: targetSection.offsetTop,
+                        behavior: 'smooth'
+                    });
+
+                    pageIndex.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
